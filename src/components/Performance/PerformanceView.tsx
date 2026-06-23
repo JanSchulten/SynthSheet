@@ -39,6 +39,18 @@ export function PerformanceView({ song, onExit, onSettings, midiOutputId, midiOu
 
   const currentSection = song.sections[sectionIdx]
 
+  // Choose a column count so the whole section fits the screen nicely on a phone.
+  const barCount = currentSection?.bars.length ?? 0
+  const gridCols = barCount <= 4 ? 1 : barCount <= 16 ? 2 : 3
+
+  // When there are many bars, step the chord font down so they stay on one screen.
+  const effectiveFontSize: FontSize =
+    barCount > 24
+      ? FONT_SIZES[Math.max(0, FONT_SIZES.indexOf(fontSize) - 2)]
+      : barCount > 12
+      ? FONT_SIZES[Math.max(0, FONT_SIZES.indexOf(fontSize) - 1)]
+      : fontSize
+
   const goNext = () => {
     setSectionIdx((i) => Math.min(i + 1, song.sections.length - 1))
   }
@@ -151,43 +163,69 @@ export function PerformanceView({ song, onExit, onSettings, midiOutputId, midiOu
         </div>
       </div>
 
-      {/* Main grid area - fills available space */}
-      <div className="flex-1 overflow-y-auto px-4 py-2" onClick={(e) => e.stopPropagation()}>
+      {/* Main grid area - the whole section fits the screen; scrolls only as fallback */}
+      <div className="flex-1 overflow-y-auto px-3 py-2 min-h-0" onClick={(e) => e.stopPropagation()}>
         <div
-          className="grid gap-3 h-full"
-          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))' }}
+          className="grid gap-2 h-full"
+          style={{
+            gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+            gridAutoRows: 'minmax(64px, 1fr)',
+          }}
         >
-          {currentSection.bars.map((bar, barIdx) => (
-            <div
-              key={bar.id}
-              className="bg-surface rounded-xl overflow-hidden border border-border"
-            >
-              <div className="px-2 py-1 bg-bg/50">
-                <span className="text-text-secondary text-xs">{barIdx + 1}</span>
-              </div>
-              <div className="flex h-full min-h-[80px]">
-                {bar.slots.map((slot, slotIdx) => {
-                  const patch = slot.patchId ? song.patches.find((p) => p.id === slot.patchId) : null
-                  return (
-                    <div
-                      key={slotIdx}
-                      className="flex-1 flex flex-col items-center justify-center px-1 py-2 border-r border-border/50 last:border-r-0"
-                      style={{
-                        borderLeft: slotIdx === 0 && patch ? `4px solid ${patch.color}` : undefined,
-                      }}
+          {currentSection.bars.map((bar, barIdx) => {
+            const filled = bar.slots.filter((s) => s.chord.trim() !== '')
+            const barPatch = bar.slots[0]?.patchId
+              ? song.patches.find((p) => p.id === bar.slots[0].patchId)
+              : null
+            return (
+              <div
+                key={bar.id}
+                className="bg-surface rounded-xl overflow-hidden border border-border flex flex-col min-h-0"
+                style={{ borderLeft: barPatch ? `4px solid ${barPatch.color}` : undefined }}
+              >
+                <div className="px-2 py-0.5 bg-bg/40 shrink-0">
+                  <span className="text-text-secondary text-[10px]">{barIdx + 1}</span>
+                </div>
+
+                {filled.length <= 1 ? (
+                  /* Single chord (or empty) — centered across the whole bar */
+                  <div className="flex-1 flex flex-col items-center justify-center px-1 min-h-0">
+                    <span
+                      className={`${chordFontClass[effectiveFontSize]} font-bold leading-none text-center truncate max-w-full ${filled.length ? 'text-white' : 'text-border'}`}
                     >
-                      <span className={`${chordFontClass[fontSize]} font-bold leading-tight text-center ${slot.chord ? 'text-white' : 'text-border'}`}>
-                        {slot.chord || '·'}
+                      {filled[0]?.chord || '·'}
+                    </span>
+                    {filled[0]?.annotation && (
+                      <span className="text-text-secondary text-xs mt-1 text-center truncate max-w-full">
+                        {filled[0].annotation}
                       </span>
-                      {slot.annotation && (
-                        <span className="text-text-secondary text-xs mt-1 text-center">{slot.annotation}</span>
-                      )}
-                    </div>
-                  )
-                })}
+                    )}
+                  </div>
+                ) : (
+                  /* Multiple chords — show beat columns to preserve timing */
+                  <div className="flex-1 flex min-h-0">
+                    {bar.slots.map((slot, slotIdx) => (
+                      <div
+                        key={slotIdx}
+                        className="flex-1 flex flex-col items-center justify-center px-0.5 border-r border-border/50 last:border-r-0 min-w-0"
+                      >
+                        <span
+                          className={`${chordFontClass[effectiveFontSize]} font-bold leading-none text-center truncate max-w-full ${slot.chord ? 'text-white' : 'text-border/60'}`}
+                        >
+                          {slot.chord || '·'}
+                        </span>
+                        {slot.annotation && (
+                          <span className="text-text-secondary text-[10px] mt-0.5 text-center truncate max-w-full">
+                            {slot.annotation}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
