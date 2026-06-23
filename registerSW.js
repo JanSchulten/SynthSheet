@@ -1,1 +1,1 @@
-if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/synth-sheet-live/sw.js', { scope: '/synth-sheet-live/' })})}
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/SynthSheet/sw.js', { scope: '/SynthSheet/' })})}
