@@ -4,6 +4,7 @@ import { isMidiSupported } from '../utils/midiUtils'
 export function useMidi() {
   const [supported] = useState(() => isMidiSupported())
   const [outputs, setOutputs] = useState<MIDIOutput[]>([])
+  const [inputs, setInputs] = useState<MIDIInput[]>([])
   const accessRef = useRef<MIDIAccess | null>(null)
 
   useEffect(() => {
@@ -11,11 +12,12 @@ export function useMidi() {
 
     navigator.requestMIDIAccess().then((midiAccess) => {
       accessRef.current = midiAccess
-      setOutputs(Array.from(midiAccess.outputs.values()))
-
-      midiAccess.onstatechange = () => {
+      const refresh = () => {
         setOutputs(Array.from(midiAccess.outputs.values()))
+        setInputs(Array.from(midiAccess.inputs.values()))
       }
+      refresh()
+      midiAccess.onstatechange = refresh
     }).catch(() => {})
 
     return () => {
@@ -25,5 +27,5 @@ export function useMidi() {
     }
   }, [supported])
 
-  return { supported, outputs }
+  return { supported, outputs, inputs }
 }

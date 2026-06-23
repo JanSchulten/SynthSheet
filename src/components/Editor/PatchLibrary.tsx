@@ -29,10 +29,10 @@ export function PatchLibrary({ patches, onAdd, onUpdate, onDelete }: PatchLibrar
   }
 
   return (
-    <div className="bg-surface border-t border-border">
+    <div className="glass m-2 rounded-2xl overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-border/30 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-white/5 transition-colors"
       >
         <span className="text-white font-medium text-sm">Patches ({patches.length})</span>
         <span className="text-text-secondary text-sm">{expanded ? '▼' : '▲'}</span>
@@ -45,7 +45,7 @@ export function PatchLibrary({ patches, onAdd, onUpdate, onDelete }: PatchLibrar
             {patches.map((patch) => (
               <div
                 key={patch.id}
-                className="flex items-center gap-2 bg-bg border border-border rounded-lg px-2 py-1.5 group"
+                className="flex items-center gap-2 bg-black/30 border border-white/10 rounded-xl px-2 py-1.5 group"
               >
                 <div className="relative">
                   <div
@@ -116,12 +116,12 @@ export function PatchLibrary({ patches, onAdd, onUpdate, onDelete }: PatchLibrar
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
               placeholder="New patch name..."
-              className="flex-1 bg-bg border border-border rounded-lg px-3 py-2 text-white placeholder-text-secondary focus:outline-none focus:border-accent text-sm min-h-[36px]"
+              className="flex-1 bg-black/30 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-text-secondary focus:outline-none focus:border-accent text-sm min-h-[36px]"
             />
             <button
               onClick={handleAdd}
               disabled={!newName.trim()}
-              className="min-h-[36px] px-3 bg-accent text-bg font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-40 text-sm"
+              className="min-h-[36px] px-3 glass-accent font-semibold rounded-xl disabled:opacity-40 text-sm"
             >
               Add
             </button>

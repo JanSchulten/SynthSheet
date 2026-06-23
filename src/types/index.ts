@@ -6,6 +6,18 @@ export interface Song {
   key: string
   sections: Section[]
   patches: Patch[]
+  midiChannel?: number // 0–15, default 0
+}
+
+export interface Setlist {
+  id: string
+  name: string
+  songIds: string[]
+}
+
+export interface MidiBinding {
+  type: 'cc' | 'note'
+  number: number
 }
 
 export interface Section {
@@ -24,7 +36,9 @@ export interface Slot {
   chord: string
   patchId?: string
   annotation?: string
-  midiPC?: number
+  midiPC?: number // 0–127
+  midiBankMSB?: number // CC#0, 0–127
+  midiBankLSB?: number // CC#32, 0–127
 }
 
 export interface Patch {

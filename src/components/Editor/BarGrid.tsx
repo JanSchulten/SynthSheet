@@ -42,8 +42,8 @@ export function BarGrid({
           const globalBarNum = barOffset + barIdx + 1
           const patch = bar.slots[0]?.patchId ? patches.find((p) => p.id === bar.slots[0].patchId) : null
           return (
-            <div key={bar.id} className="bg-bg border border-border rounded-lg overflow-hidden relative group">
-              <div className="flex items-center justify-between px-2 py-1 bg-surface">
+            <div key={bar.id} className="glass rounded-xl overflow-hidden relative group">
+              <div className="flex items-center justify-between px-2 py-1 bg-black/20">
                 <span className="text-text-secondary text-xs">{globalBarNum}</span>
                 <button
                   onClick={() => onRemoveBar(bar.id)}
@@ -70,7 +70,7 @@ export function BarGrid({
                           position: { top: rect.bottom + 4, left: rect.left + rect.width / 2 },
                         })
                       }}
-                      className="flex-1 min-h-[52px] flex flex-col items-center justify-center px-1 py-1 hover:bg-border/50 transition-colors border-r border-border last:border-r-0 relative"
+                      className="flex-1 min-h-[52px] flex flex-col items-center justify-center px-1 py-1 hover:bg-white/10 transition-colors border-r border-white/10 last:border-r-0 relative"
                     >
                       {slotPatch && (
                         <div
@@ -97,7 +97,7 @@ export function BarGrid({
       <div className="flex gap-2 mt-2">
         <button
           onClick={onAddBar}
-          className="min-h-[36px] px-3 bg-border text-text-secondary rounded-lg hover:bg-[#3a3a3a] hover:text-white transition-colors text-sm"
+          className="glass-button min-h-[36px] px-3 text-white rounded-xl text-sm"
         >
           + Bar
         </button>
