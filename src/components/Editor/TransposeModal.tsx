@@ -34,10 +34,10 @@ export function TransposeModal({ currentKey, onTranspose, onClose }: TransposeMo
               <button
                 key={k}
                 onClick={() => setTargetKey(k)}
-                className={`min-h-[40px] rounded-lg text-sm font-medium transition-colors ${
+                className={`min-h-[40px] rounded-xl text-sm font-medium transition-all ${
                   targetKey.replace('m', '') === k
-                    ? 'bg-accent text-bg'
-                    : 'bg-border text-white hover:bg-[#3a3a3a]'
+                    ? 'glass-accent'
+                    : 'glass-button text-white'
                 }`}
               >
                 {k}
@@ -50,7 +50,7 @@ export function TransposeModal({ currentKey, onTranspose, onClose }: TransposeMo
           <button
             onClick={() => setMinor(!minor)}
             className={`min-h-[36px] px-4 rounded-lg text-sm font-medium transition-colors ${
-              minor ? 'bg-accent text-bg' : 'bg-border text-white hover:bg-[#3a3a3a]'
+              minor ? 'glass-accent' : 'glass-button text-white'
             }`}
           >
             Minor
@@ -63,14 +63,14 @@ export function TransposeModal({ currentKey, onTranspose, onClose }: TransposeMo
         <div className="flex gap-2 pt-2">
           <button
             onClick={() => { onTranspose(fullTargetKey); onClose() }}
-            className="flex-1 min-h-[44px] bg-accent text-bg font-semibold rounded-lg hover:opacity-90 transition-opacity"
+            className="flex-1 min-h-[44px] glass-accent font-semibold rounded-xl"
             disabled={fullTargetKey === baseKey + (minor ? 'm' : '')}
           >
             Transpose
           </button>
           <button
             onClick={onClose}
-            className="min-h-[44px] px-5 bg-border text-white rounded-lg hover:bg-[#3a3a3a] transition-colors"
+            className="min-h-[44px] px-5 glass-button text-white rounded-xl"
           >
             Cancel
           </button>

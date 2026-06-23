@@ -20,12 +20,12 @@ export function SectionPanel({
   onScrollTo,
 }: SectionPanelProps) {
   return (
-    <div className="bg-surface border-b border-border px-4 py-3">
+    <div className="glass mx-2 rounded-2xl px-3 py-2.5">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-text-secondary text-sm font-medium">Sections</span>
         <button
           onClick={onAdd}
-          className="min-h-[32px] px-3 bg-border text-text-secondary rounded-lg hover:bg-[#3a3a3a] hover:text-white transition-colors text-xs ml-auto"
+          className="glass-button min-h-[32px] px-3 text-white rounded-lg text-xs ml-auto"
         >
           + Add
         </button>
@@ -34,7 +34,7 @@ export function SectionPanel({
         {sections.map((sec, idx) => (
           <div
             key={sec.id}
-            className="flex items-center gap-1 bg-bg border border-border rounded-lg px-2 py-1.5 group"
+            className="flex items-center gap-1 bg-black/30 border border-white/10 rounded-xl px-2 py-1.5 group"
           >
             {/* Color picker */}
             <div className="relative">

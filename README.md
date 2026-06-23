@@ -10,10 +10,18 @@ A PWA for creating and performing synthesizer chord sheets live.
 
 - Create and manage chord sheets organized into songs and sections
 - Bar-based grid editor with per-beat chord slots, patch labels, and annotations
-- **Performance Mode**: full-screen live view with swipe navigation, Wake Lock, and large chord display
-- Patch library per song with color coding
+- **Setlists** — order songs for a gig and play straight through; the last section of a song advances to the next song
+- **Performance Mode**: full-screen live view, the whole section fits the screen, swipe navigation, Wake Lock, large chord display
+- **Synth MIDI control** (Chromium browsers):
+  - Bank Select (CC#0 MSB / CC#32 LSB) + Program Change per slot, per-song MIDI channel
+  - Auto patch-switch on section change; tap a bar to fire its patch manually
+  - **Hands-free navigation** via MIDI foot pedal / controller (MIDI-Learn for next/prev)
+  - **MIDI Clock out** so your synth's arpeggiator / sequencer locks to the sheet tempo
+- **Metronome** with visual flash + audio click in Performance Mode
+- **Share / Export** songs natively (WhatsApp, Mail, iCloud, AirDrop …) via the Web Share API, with download fallback
+- Patch library per song with color coding and autocomplete
 - Key transposition across all chords
-- MIDI Program Change on section change (Chromium browsers)
+- Modern translucent "Liquid Glass" UI, dark, fully responsive
 - Fully offline after first visit (Service Worker + cache-first)
 - All data stored locally — no account, no backend
 

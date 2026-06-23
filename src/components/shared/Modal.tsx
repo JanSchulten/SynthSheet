@@ -17,24 +17,25 @@ export function Modal({ title, onClose, children }: ModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4"
+      style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
       <div
-        className="bg-surface rounded-xl w-full max-w-md border border-border shadow-2xl"
+        className="glass-strong rounded-3xl w-full max-w-md max-h-[88vh] flex flex-col animate-glass-in"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <h2 className="text-white font-semibold text-lg">{title}</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 shrink-0">
+          <h2 className="text-white font-semibold text-lg tracking-tight">{title}</h2>
           <button
             onClick={onClose}
-            className="text-text-secondary hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-border"
+            className="glass-button text-text-secondary hover:text-white min-h-[40px] min-w-[40px] flex items-center justify-center rounded-full"
           >
             ✕
           </button>
         </div>
-        <div className="p-5">{children}</div>
+        <div className="p-5 overflow-y-auto">{children}</div>
       </div>
     </div>
   )

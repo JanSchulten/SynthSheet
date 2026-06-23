@@ -1,54 +1,72 @@
 import { useState } from 'react'
-import { SongList } from './components/SongList/SongList'
+import { HomeScreen } from './components/SongList/HomeScreen'
 import { EditorView } from './components/Editor/EditorView'
 import { PerformanceView } from './components/Performance/PerformanceView'
 import { SettingsPanel } from './components/Settings/SettingsPanel'
 import { useSongStore } from './store/songStore'
-import { useSettingsStore } from './store/settingsStore'
-import { useMidi } from './hooks/useMidi'
 
-type Screen = 'list' | 'editor' | 'performance'
+type Screen = 'home' | 'editor' | 'performance'
+
+interface PerfQueue {
+  songIds: string[]
+  index: number
+}
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>('list')
+  const [screen, setScreen] = useState<Screen>('home')
   const [activeSongId, setActiveSongId] = useState<string | null>(null)
   const [showSettings, setShowSettings] = useState(false)
+  const [queue, setQueue] = useState<PerfQueue | null>(null)
   const { songs } = useSongStore()
-  const { midiOutputId } = useSettingsStore()
-  const { outputs: midiOutputs } = useMidi()
-
-  const activeSong = activeSongId ? songs.find((s) => s.id === activeSongId) ?? null : null
 
   const goToEditor = (id: string) => {
     setActiveSongId(id)
     setScreen('editor')
   }
 
-  const goToPerformance = () => setScreen('performance')
-  const goToList = () => setScreen('list')
+  const playSong = (id: string) => {
+    setQueue({ songIds: [id], index: 0 })
+    setScreen('performance')
+  }
+
+  const playQueue = (songIds: string[]) => {
+    if (songIds.length === 0) return
+    setQueue({ songIds, index: 0 })
+    setScreen('performance')
+  }
+
+  const currentSong = queue ? songs.find((s) => s.id === queue.songIds[queue.index]) ?? null : null
 
   return (
-    <div className="h-[100dvh] flex flex-col overflow-hidden bg-bg">
-      {screen === 'list' && (
-        <SongList onEdit={goToEditor} onSettings={() => setShowSettings(true)} />
-      )}
-
-      {screen === 'editor' && activeSong && (
-        <EditorView
-          songId={activeSong.id}
-          onBack={goToList}
-          onPerformance={goToPerformance}
+    <div className="h-[100dvh] flex flex-col overflow-hidden">
+      {screen === 'home' && (
+        <HomeScreen
+          onEditSong={goToEditor}
+          onPlaySong={playSong}
+          onPlayQueue={playQueue}
           onSettings={() => setShowSettings(true)}
         />
       )}
 
-      {screen === 'performance' && activeSong && (
-        <PerformanceView
-          song={activeSong}
-          onExit={() => setScreen('editor')}
+      {screen === 'editor' && activeSongId && (
+        <EditorView
+          songId={activeSongId}
+          onBack={() => setScreen('home')}
+          onPerformance={() => playSong(activeSongId)}
           onSettings={() => setShowSettings(true)}
-          midiOutputId={midiOutputId}
-          midiOutputs={midiOutputs}
+        />
+      )}
+
+      {screen === 'performance' && currentSong && queue && (
+        <PerformanceView
+          song={currentSong}
+          queuePosition={queue.songIds.length > 1 ? { index: queue.index, total: queue.songIds.length } : null}
+          hasNextSong={queue.index < queue.songIds.length - 1}
+          hasPrevSong={queue.index > 0}
+          onNextSong={() => setQueue((q) => (q ? { ...q, index: Math.min(q.index + 1, q.songIds.length - 1) } : q))}
+          onPrevSong={() => setQueue((q) => (q ? { ...q, index: Math.max(q.index - 1, 0) } : q))}
+          onExit={() => setScreen(activeSongId ? 'editor' : 'home')}
+          onSettings={() => setShowSettings(true)}
         />
       )}
 

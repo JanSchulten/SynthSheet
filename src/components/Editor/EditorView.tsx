@@ -44,7 +44,7 @@ export function EditorView({ songId, onBack, onPerformance, onSettings }: Editor
 
   return (
     <div
-      className="flex flex-col h-full bg-bg"
+      className="flex flex-col h-full"
       style={{
         paddingTop: 'env(safe-area-inset-top)',
         paddingBottom: 'env(safe-area-inset-bottom)',
@@ -53,86 +53,44 @@ export function EditorView({ songId, onBack, onPerformance, onSettings }: Editor
       }}
     >
       {/* Top bar */}
-      <div className="flex flex-wrap items-center gap-2 px-4 py-3 bg-surface border-b border-border shrink-0">
-        <button
-          onClick={onBack}
-          className="min-h-[44px] min-w-[44px] flex items-center justify-center text-text-secondary hover:text-white rounded-lg hover:bg-border transition-colors"
-        >
-          ←
-        </button>
+      <div className="glass m-2 rounded-2xl flex flex-wrap items-center gap-2 px-3 py-2 shrink-0">
+        <button onClick={onBack} className="glass-button min-h-[44px] min-w-[44px] flex items-center justify-center text-white rounded-full">←</button>
 
-        {/* Title */}
         <input
           value={song.title}
           onChange={(e) => updateSong(songId, { title: e.target.value })}
-          className="bg-transparent text-white font-semibold text-base focus:outline-none focus:border-b focus:border-accent flex-1 min-w-[120px]"
+          className="bg-transparent text-white font-semibold text-base focus:outline-none flex-1 min-w-[120px] tracking-tight"
         />
 
-        {/* BPM */}
-        <div className="flex items-center gap-1">
-          <input
-            type="number"
-            value={song.bpm}
-            onChange={(e) => updateSong(songId, { bpm: Number(e.target.value) })}
-            className="bg-bg border border-border rounded-lg px-2 py-1 text-white w-16 text-sm focus:outline-none focus:border-accent text-center"
-            min={20}
-            max={300}
-          />
+        <div className="flex items-center gap-1 bg-black/30 border border-white/10 rounded-xl px-2 min-h-[36px]">
+          <input type="number" value={song.bpm} onChange={(e) => updateSong(songId, { bpm: Number(e.target.value) })}
+            className="bg-transparent text-white w-12 text-sm focus:outline-none text-center" min={20} max={300} />
           <span className="text-text-secondary text-xs">BPM</span>
         </div>
 
-        {/* Time signature */}
-        <select
-          value={song.timeSignature.join('/')}
-          onChange={(e) => {
-            const parts = e.target.value.split('/').map(Number)
-            updateSong(songId, { timeSignature: parts as TimeSignature })
-          }}
-          className="bg-bg border border-border rounded-lg px-2 py-1 text-white text-sm focus:outline-none focus:border-accent min-h-[36px]"
-        >
-          {TIME_SIGNATURES.map((ts) => (
-            <option key={ts.join('/')} value={ts.join('/')}>{ts.join('/')}</option>
-          ))}
+        <select value={song.timeSignature.join('/')}
+          onChange={(e) => updateSong(songId, { timeSignature: e.target.value.split('/').map(Number) as TimeSignature })}
+          className="bg-black/30 border border-white/10 rounded-xl px-2 text-white text-sm focus:outline-none min-h-[36px]">
+          {TIME_SIGNATURES.map((ts) => <option key={ts.join('/')} value={ts.join('/')}>{ts.join('/')}</option>)}
         </select>
 
-        {/* Key */}
-        <select
-          value={song.key.replace('m', '')}
+        <select value={song.key.replace('m', '')}
           onChange={(e) => updateSong(songId, { key: e.target.value + (song.key.endsWith('m') ? 'm' : '') })}
-          className="bg-bg border border-border rounded-lg px-2 py-1 text-white text-sm focus:outline-none focus:border-accent min-h-[36px]"
-        >
+          className="bg-black/30 border border-white/10 rounded-xl px-2 text-white text-sm focus:outline-none min-h-[36px]">
           {KEYS.map((k) => <option key={k} value={k}>{k}</option>)}
         </select>
-        <button
-          onClick={() => updateSong(songId, { key: song.key.endsWith('m') ? song.key.slice(0, -1) : song.key + 'm' })}
-          className={`min-h-[36px] px-2 rounded-lg text-xs transition-colors border ${
-            song.key.endsWith('m') ? 'border-accent text-accent bg-accent/10' : 'border-border text-text-secondary hover:border-white hover:text-white'
-          }`}
-        >
-          m
-        </button>
+        <button onClick={() => updateSong(songId, { key: song.key.endsWith('m') ? song.key.slice(0, -1) : song.key + 'm' })}
+          className={`min-h-[36px] px-2 rounded-xl text-xs transition-colors border ${song.key.endsWith('m') ? 'border-accent text-accent bg-accent/10' : 'border-white/10 text-text-secondary hover:text-white'}`}>m</button>
 
-        {/* Actions */}
-        <button
-          onClick={() => setShowTranspose(true)}
-          className="min-h-[36px] px-3 bg-border text-white rounded-lg hover:bg-[#3a3a3a] transition-colors text-sm"
-        >
-          Transpose
-        </button>
+        {/* MIDI channel */}
+        <select value={song.midiChannel ?? 0} onChange={(e) => updateSong(songId, { midiChannel: Number(e.target.value) })}
+          className="bg-black/30 border border-white/10 rounded-xl px-2 text-white text-sm focus:outline-none min-h-[36px]" title="MIDI-Kanal">
+          {Array.from({ length: 16 }, (_, i) => <option key={i} value={i}>Ch {i + 1}</option>)}
+        </select>
 
-        <button
-          onClick={onSettings}
-          className="min-h-[44px] min-w-[44px] flex items-center justify-center text-text-secondary hover:text-white rounded-lg hover:bg-border transition-colors"
-        >
-          ⚙
-        </button>
-
-        <button
-          onClick={onPerformance}
-          className="min-h-[44px] px-4 bg-accent text-bg font-bold rounded-lg hover:opacity-90 transition-opacity text-sm"
-        >
-          ▶ Perform
-        </button>
+        <button onClick={() => setShowTranspose(true)} className="glass-button min-h-[36px] px-3 text-white rounded-xl text-sm">Transponieren</button>
+        <button onClick={onSettings} className="glass-button min-h-[44px] min-w-[44px] flex items-center justify-center text-white rounded-full">⚙</button>
+        <button onClick={onPerformance} className="glass-accent min-h-[44px] px-4 font-bold rounded-xl text-sm">▶ Perform</button>
       </div>
 
       {/* Section panel */}
