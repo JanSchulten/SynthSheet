@@ -4,7 +4,7 @@ A PWA for creating and performing synthesizer chord sheets live.
 
 ## Live App
 
-**https://janschulten.github.io/synth-sheet-live/**
+**https://janschulten.github.io/SynthSheet/**
 
 ## Features
 
